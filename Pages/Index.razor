@@ -1,0 +1,64 @@
+﻿@page "/"
+
+@using Syncfusion.Blazor.Data
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.Kanban
+@using Newtonsoft.Json
+@using System.Collections
+@using Microsoft.EntityFrameworkCore
+
+@using BlazorApp1.Data
+@inject OrderService _craftService;
+<SfKanban ID="Kanban" TValue="Order" KeyField="ShipCity">
+    <SfDataManager AdaptorInstance="@typeof(CustomAdaptor)" Adaptor="Adaptors.CustomAdaptor"></SfDataManager>
+    <KanbanColumns>
+        <KanbanColumn HeaderText="Brazil" KeyField=@(new List<string>{"Brazil"}) AllowAdding=true></KanbanColumn>
+        <KanbanColumn HeaderText="Sweden" KeyField=@(new List<string>{"Sweden"})></KanbanColumn>
+        <KanbanColumn HeaderText="India" KeyField=@(new List<string>{"India"})></KanbanColumn>
+    </KanbanColumns>
+    <KanbanCardSettings HeaderField="EmployeeID" ContentField="ShipName"></KanbanCardSettings>
+</SfKanban>
+
+@code {
+    public class CustomAdaptor : DataAdaptor
+    {
+        OrderDataAccessLayer db = new OrderDataAccessLayer();
+        public CustomAdaptor()
+        {
+        }
+        public async override Task<object> ReadAsync(DataManagerRequest dm, string key = null)
+        {
+            OrderService _craftService = new OrderService();
+            IEnumerable DataSource = await _craftService.GetOrdersAsync();
+            int count = DataSource.Cast<Order>().Count();
+            return dm.RequiresCounts ? new DataResult() { Result = DataSource, Count = count } : (object)DataSource;
+        }
+        // Performs BatchUpdate operation
+        public override object BatchUpdate(DataManager dm, object Changed, object Added, object Deleted, string KeyField, string Key, int? dropIndex)
+        {
+            if (Changed != null)
+            {
+                foreach (var rec in (IEnumerable<Order>)Changed)
+                {
+                   db.UpdateOrder(rec);
+                }
+            }
+            if (Added != null)
+            {
+                foreach (var rec in (IEnumerable<Order>)Added)
+                {
+                    db.AddOrder((Order)rec);
+                }
+            }
+            if (Deleted != null)
+            {
+                foreach (var rec in (IEnumerable<Order>)Deleted)
+                {
+                    db.DeleteOrder((Order)rec);
+                }
+            }
+            return new { };
+        }
+    }
+
+}
