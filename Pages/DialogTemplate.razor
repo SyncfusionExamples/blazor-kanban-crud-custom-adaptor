@@ -1,0 +1,124 @@
+﻿@page "/dialog-template"
+
+@using Syncfusion.Blazor.Data
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.Kanban
+@using Newtonsoft.Json
+@using System.Collections
+@using Microsoft.EntityFrameworkCore
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.DropDowns
+@using BlazorApp1.Data
+@inject OrderService _craftService;
+<SfKanban ID="Kanban" TValue="Order" KeyField="ShipCity">
+    <SfDataManager AdaptorInstance="@typeof(CustomAdaptor)" Adaptor="Adaptors.CustomAdaptor"></SfDataManager>
+    <KanbanColumns>
+        <KanbanColumn HeaderText="Brazil" KeyField=@(new List<string>{"Brazil"}) AllowAdding=true></KanbanColumn>
+        <KanbanColumn HeaderText="Sweden" KeyField=@(new List<string>{"Sweden"})></KanbanColumn>
+        <KanbanColumn HeaderText="India" KeyField=@(new List<string>{"India"})></KanbanColumn>
+    </KanbanColumns>
+    <KanbanDialogSettings>
+        <Template>
+            @{
+                Order data = (Order)context;
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="e-label">Employee ID</td>
+                            <td>
+                                <SfTextBox CssClass="e-field" Value="@data.EmployeeID.ToString()"></SfTextBox>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="e-label">Ship Name</td>
+                            <td>
+                                <SfDropDownList @ref="ShipNameRef" TValue="string" TItem="DropDownModel" CssClass="e-field" DataSource="@ShipNames" @bind-Value="@data.ShipName">
+                                    <DropDownListFieldSettings Text="Value" Value="Value"></DropDownListFieldSettings>
+                                </SfDropDownList>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="e-label">Ship City</td>
+                            <td>
+                                <SfDropDownList @ref="ShipCountryRef" TValue="string" TItem="DropDownModel" CssClass="e-field" DataSource="@Cities" @bind-Value="@data.ShipCity">
+                                    <DropDownListFieldSettings Text="Value" Value="Value"></DropDownListFieldSettings>
+                                </SfDropDownList>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            }
+        </Template>
+    </KanbanDialogSettings>
+    <KanbanCardSettings HeaderField="EmployeeID" ContentField="ShipName"></KanbanCardSettings>
+</SfKanban>
+
+@code {
+    SfDropDownList<string, DropDownModel> ShipNameRef;
+    SfDropDownList<string, DropDownModel> ShipCountryRef;
+
+    public class DropDownModel
+    {
+        public int Id { get; set; }
+        public string Value { get; set; }
+    }
+
+    public List<DropDownModel> Cities = new List<DropDownModel>()
+        {
+            new DropDownModel { Id = 0, Value = "Moscow" },
+            new DropDownModel { Id = 1, Value = "London" },
+            new DropDownModel { Id = 2, Value = "Singapore" }
+        };
+
+    public List<DropDownModel> ShipNames = new List<DropDownModel>()
+        {
+            new DropDownModel { Id = 0, Value = "Chop-suey Chinese" },
+            new DropDownModel { Id = 1, Value = "Richter Supermarket" },
+            new DropDownModel { Id = 2, Value = "HILARION-Abastos" },
+            new DropDownModel { Id = 3, Value = "Centro comercial Moctezuma" },
+            new DropDownModel { Id = 4, Value = "Ottilies Käseladen" }
+        };
+
+    public class CustomAdaptor : DataAdaptor
+    {
+        OrderDataAccessLayer db = new OrderDataAccessLayer();
+        public CustomAdaptor()
+        {
+        }
+        public async override Task<object> ReadAsync(DataManagerRequest dm, string key = null)
+        {
+            OrderService _craftService = new OrderService();
+            IEnumerable DataSource = await _craftService.GetOrdersAsync();
+            int count = DataSource.Cast<Order>().Count();
+            return dm.RequiresCounts ? new DataResult() { Result = DataSource, Count = count } : (object)DataSource;
+        }
+        // Performs BatchUpdate operation
+        public override object BatchUpdate(DataManager dm, object Changed, object Added, object Deleted, string KeyField, string Key, int? dropIndex)
+        {
+            if (Changed != null)
+            {
+                foreach (var rec in (IEnumerable<Order>)Changed)
+                {
+                    db.UpdateOrder(rec);
+                }
+            }
+            if (Added != null)
+            {
+                foreach (var rec in (IEnumerable<Order>)Added)
+                {
+                    db.AddOrder((Order)rec);
+                }
+            }
+            if (Deleted != null)
+            {
+                foreach (var rec in (IEnumerable<Order>)Deleted)
+                {
+                    db.DeleteOrder((Order)rec);
+                }
+            }
+            return new { };
+        }
+    }
+
+
+}

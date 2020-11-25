@@ -38,7 +38,7 @@ namespace BlazorApp1.Data
             }
         }
 
-        //To Update the records of a particluar Order    
+        //To Update the records of a particular Order    
         public void UpdateOrder(Order Order)
         {
             try
