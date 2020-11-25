@@ -22,7 +22,7 @@ namespace BlazorApp1.Controllers
         [HttpGet]
         public IQueryable<Order> Get()
         {
-            IQueryable<Order> data = db.GetAllOrders();   //call the method to fecth data from db and return to client
+            IQueryable<Order> data = db.GetAllOrders();   //call the method to fetch data from db and return to client
             return data;
         }
     }

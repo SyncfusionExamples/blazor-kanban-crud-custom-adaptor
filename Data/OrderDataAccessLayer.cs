@@ -41,6 +41,18 @@ namespace BlazorApp1.Data
         //To Update the records of a particular Order    
         public void UpdateOrder(Order Order)
         {
+            // 
+            var empId = db.Set<Order>()
+                .Local
+                .FirstOrDefault(entry => entry.EmployeeID.Equals(Order.EmployeeID));
+
+            // check if local is not null 
+            if (empId != null)
+            {
+                // detach
+                db.Entry(empId).State = EntityState.Detached;
+            }
+
             try
             {
                 db.Entry(Order).State = EntityState.Modified;

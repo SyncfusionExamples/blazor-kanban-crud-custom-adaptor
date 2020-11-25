@@ -15,7 +15,7 @@ namespace BlazorApp1.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename='C:\Users\RajendranR\Desktop\KanbanBlazorCustom_Adaptor\App_Data\NORTHWND.MDF';Integrated Security=True;Connect Timeout=30");
+                optionsBuilder.UseSqlServer(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename='D:\Workspace\GitHub\blazor-kanban-crud-custom-adaptor\App_Data\NORTHWND.MDF';Integrated Security=True;Connect Timeout=30");
             }
         }
     }
