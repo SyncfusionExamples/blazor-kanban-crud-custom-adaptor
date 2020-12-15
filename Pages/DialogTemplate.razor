@@ -26,15 +26,16 @@
                         <tr>
                             <td class="e-label">Employee ID</td>
                             <td>
-                                <SfTextBox CssClass="e-field" Value="@data.EmployeeID.ToString()"></SfTextBox>
+                                <SfTextBox CssClass="e-field" @bind-Value="@data.EmployeeID"></SfTextBox>
                             </td>
                         </tr>
                         <tr>
                             <td class="e-label">Ship Name</td>
                             <td>
-                                <SfDropDownList @ref="ShipNameRef" TValue="string" TItem="DropDownModel" CssClass="e-field" DataSource="@ShipNames" @bind-Value="@data.ShipName">
-                                    <DropDownListFieldSettings Text="Value" Value="Value"></DropDownListFieldSettings>
-                                </SfDropDownList>
+                                <SfTextBox CssClass="e-field" @bind-Value="@data.ShipName"></SfTextBox>
+                                @*<SfDropDownList @ref="ShipNameRef" TValue="string" TItem="DropDownModel" CssClass="e-field" DataSource="@ShipNames" @bind-Value="@data.ShipName">
+            <DropDownListFieldSettings Text="Value" Value="Value"></DropDownListFieldSettings>
+        </SfDropDownList>*@
                             </td>
                         </tr>
                         <tr>
