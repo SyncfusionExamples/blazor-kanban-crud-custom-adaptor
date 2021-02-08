@@ -1,5 +1,4 @@
 ﻿@page "/dialog-template"
-
 @using Syncfusion.Blazor.Data
 @using Syncfusion.Blazor
 @using Syncfusion.Blazor.Kanban
@@ -26,16 +25,13 @@
                         <tr>
                             <td class="e-label">Employee ID</td>
                             <td>
-                                <SfTextBox CssClass="e-field" @bind-Value="@data.EmployeeID"></SfTextBox>
+                                <input class="e-field form-control" @bind="@(data.EmployeeID)" type="number" disabled />
                             </td>
                         </tr>
                         <tr>
                             <td class="e-label">Ship Name</td>
                             <td>
                                 <SfTextBox CssClass="e-field" @bind-Value="@data.ShipName"></SfTextBox>
-                                @*<SfDropDownList @ref="ShipNameRef" TValue="string" TItem="DropDownModel" CssClass="e-field" DataSource="@ShipNames" @bind-Value="@data.ShipName">
-            <DropDownListFieldSettings Text="Value" Value="Value"></DropDownListFieldSettings>
-        </SfDropDownList>*@
                             </td>
                         </tr>
                         <tr>
