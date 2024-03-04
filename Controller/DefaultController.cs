@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
-using BlazorApp1.Data;
+using KanbanWithCrudCustomAdaptor.Models;
 using Newtonsoft.Json;
 using Syncfusion.Blazor;
 using Syncfusion.Blazor.Data;
 using System.Collections;
 
-namespace BlazorApp1.Controllers
+namespace KanbanWithCrudCustomAdaptor.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -20,9 +20,9 @@ namespace BlazorApp1.Controllers
         OrderDataAccessLayer db = new OrderDataAccessLayer();
         // GET: api/Default
         [HttpGet]
-        public IQueryable<Order> Get()
+        public IQueryable<OrderDetail> Get()
         {
-            IQueryable<Order> data = db.GetAllOrders();   //call the method to fetch data from db and return to client
+            IQueryable<OrderDetail> data = db.GetAllOrders();   //call the method to fetch data from db and return to client
             return data;
         }
     }

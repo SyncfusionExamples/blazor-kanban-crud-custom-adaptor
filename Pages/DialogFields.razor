@@ -5,9 +5,9 @@
 @using Newtonsoft.Json
 @using System.Collections
 @using Microsoft.EntityFrameworkCore
-@using BlazorApp1.Data
+@using KanbanWithCrudCustomAdaptor.Models
 @inject OrderService _craftService;
-<SfKanban ID="Kanban" TValue="Order" KeyField="ShipCity">
+<SfKanban ID="Kanban" TValue="OrderDetail" KeyField="ShipCity">
     <SfDataManager AdaptorInstance="@typeof(CustomAdaptor)" Adaptor="Adaptors.CustomAdaptor"></SfDataManager>
     <KanbanColumns>
         <KanbanColumn HeaderText="Moscow" KeyField=@(new List<string>{"Moscow"}) AllowAdding=true></KanbanColumn>
@@ -21,7 +21,7 @@
             <KanbanDialogSettingsField Text="Employee ID" Key="EmployeeID" Type=DialogFieldType.TextBox></KanbanDialogSettingsField>
         </KanbanDialogSettingsFields>
     </KanbanDialogSettings>
-    <KanbanCardSettings HeaderField="EmployeeID" ContentField="ShipName"></KanbanCardSettings>
+    <KanbanCardSettings HeaderField="EmployeeId" ContentField="ShipName"></KanbanCardSettings>
 </SfKanban>
 
 @code {
@@ -35,14 +35,14 @@
         {
             OrderService _craftService = new OrderService();
             IEnumerable DataSource = await _craftService.GetOrdersAsync();
-            int count = DataSource.Cast<Order>().Count();
+            int count = DataSource.Cast<OrderDetail>().Count();
             return dm.RequiresCounts ? new DataResult() { Result = DataSource, Count = count } : (object)DataSource;
         }
 
         public override Task<object> InsertAsync(DataManager dm, object value, string key)
         {
-            (value as Order).EmployeeID = db.Orders.Select(x => x.EmployeeID).Max() + 1;
-            db.Orders.Add((Order)value);
+            // (value as OrderDetail).EmployeeId = db.OrderDetails.Select(x => x.EmployeeId).Max() + 1;
+            db.OrderDetails.Add((OrderDetail)value);
             db.SaveChangesAsync();
             return Task.Run(() =>
             {
@@ -52,12 +52,12 @@
 
         public override async Task<object> UpdateAsync(DataManager dataManager, object value, string keyField, string key)
         {
-            var data = db.Orders.Where(or => or.EmployeeID == (value as Order).EmployeeID).FirstOrDefault();
+            var data = db.OrderDetails.Where(or => or.EmployeeId == (value as OrderDetail).EmployeeId).FirstOrDefault();
             if (data != null)
             {
-                data.EmployeeID = (value as Order).EmployeeID;
-                data.ShipCity = (value as Order).ShipCity;
-                data.ShipName = (value as Order).ShipName;
+                data.EmployeeId = (value as OrderDetail).EmployeeId;
+                data.ShipCity = (value as OrderDetail).ShipCity;
+                data.ShipName = (value as OrderDetail).ShipName;
             }
             db.SaveChangesAsync();
             return Task.Run(() =>
@@ -68,8 +68,8 @@
 
         public override async Task<object> RemoveAsync(DataManager dataManager, object value, string keyField, string key)
         {
-            Order ord = db.Orders.Find(Convert.ToInt32(value));
-            db.Orders.Remove(ord);
+            OrderDetail ord = db.OrderDetails.Find(Convert.ToInt32(value));
+            db.OrderDetails.Remove(ord);
             db.SaveChangesAsync();
             return Task.Run(() =>
             {
@@ -82,30 +82,30 @@
         {
             if (Changed != null)
             {
-                foreach (var rec in (IEnumerable<Order>)Changed)
+                foreach (var rec in (IEnumerable<OrderDetail>)Changed)
                 {
-                    Order val = db.Orders.Where(or => or.EmployeeID == rec.EmployeeID).FirstOrDefault();
-                    val.EmployeeID = (rec as Order).EmployeeID;
-                    val.ShipCity = (rec as Order).ShipCity;
-                    val.ShipName = (rec as Order).ShipName;
+                    OrderDetail val = db.OrderDetails.Where(or => or.EmployeeId == rec.EmployeeId).FirstOrDefault();
+                    val.EmployeeId = (rec as OrderDetail).EmployeeId;
+                    val.ShipCity = (rec as OrderDetail).ShipCity;
+                    val.ShipName = (rec as OrderDetail).ShipName;
                 }
             }
             if (Added != null)
             {
-                foreach (var rec in (IEnumerable<Order>)Added)
+                foreach (var rec in (IEnumerable<OrderDetail>)Added)
                 {
-                    db.Orders.Add(rec);
+                    db.OrderDetails.Add(rec);
                 }
             }
             if (Deleted != null)
             {
-                foreach (var rec in (IEnumerable<Order>)Deleted)
+                foreach (var rec in (IEnumerable<OrderDetail>)Deleted)
                 {
-                    db.Orders.Remove(db.Orders.Where(or => or.EmployeeID == rec.EmployeeID).FirstOrDefault());
+                    db.OrderDetails.Remove(db.OrderDetails.Where(or => or.EmployeeId == rec.EmployeeId).FirstOrDefault());
                 }
             }
             db.SaveChanges();
-            return db.Orders;
+            return db.OrderDetails;
         }
     }
 }
