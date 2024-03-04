@@ -10,8 +10,8 @@ This is a project that covers CRUD operations of Blazor Kanban provided by Syncf
 
 ## How to run the project
 
-Checkout this project to a location in your disk.
-Open the solution file using the Visual Studio 2022.
-Restore the NuGet packages by rebuilding the solution.
-Update the database connection to the project.
-Run the project.
+* Checkout this project to a location in your disk.
+* Open the solution file using the Visual Studio 2022.
+* Restore the NuGet packages by rebuilding the solution.
+* Update the database connection to the project.
+* Run the project.
