@@ -1,28 +1,44 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using KanbanWithCrudCustomAdaptor.Data;
+using KanbanWithCrudCustomAdaptor.Models;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using Syncfusion.Blazor;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 
-namespace KanbanCrudSample
+Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MzEzNjU2MkAzMjM0MmUzMDJlMzBZZ0dLemV1bStGek4vamVvbVJQTXBkc0N6SVY2Wm5IaWdlN0dKMHV5ZXdzPQ==");
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
+builder.Services.AddSingleton<WeatherForecastService>();
+builder.Services.AddScoped<HttpClient>(factory => new HttpClient(new HttpClientHandler()
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
+    ServerCertificateCustomValidationCallback = (HttpRequestMessage m, X509Certificate2 f, X509Chain x, SslPolicyErrors d) => true
+}));
+builder.Services.AddSingleton<OrderService>();
+builder.Services.AddSyncfusionBlazor();
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-    }
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
 }
+
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseHttpsRedirection();
+
+app.UseStaticFiles();
+
+app.UseRouting();
+app.MapDefaultControllerRoute();
+app.MapBlazorHub();
+app.MapFallbackToPage("/_Host");
+
+app.Run();
