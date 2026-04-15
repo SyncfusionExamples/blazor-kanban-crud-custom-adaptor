@@ -34,4 +34,6 @@ dotnet restore
 dotnet build
 ```
 
-If you want, I can also update the README to include an example connection string placeholder and brief notes about the server endpoints expected by the custom adaptor.
+## Troubleshooting & support
+
+If you encounter issues, confirm that packages are restored, the project builds, and the license key is registered correctly. For more details about Syncfusion components consult the Syncfusion Blazor documentation.
